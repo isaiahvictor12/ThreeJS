@@ -1,3 +1,4 @@
+// initialize variables
 let scene,
   camera,
   renderer,
@@ -9,7 +10,9 @@ let scene,
   target,
   throwtext;
 
+// init that gets called when webpage loads
 function init() {
+  // start with game 1
   game = 1;
   scene = new THREE.Scene();
   // camera takes FOV, aspect ratio, near cull, far cull)
@@ -36,16 +39,15 @@ function init() {
   thrown = false;
   x_vel = 0;
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // initialize renderer
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-
   // add results of renderer as an HTML DOM object
   document.body.appendChild(renderer.domElement);
 
   // load an image texture
-  let texture = new THREE.TextureLoader().load("football.jpg");
-  let matTexture = new THREE.MeshPhongMaterial({ map: texture });
+  let footballtexture = new THREE.TextureLoader().load("football.jpg");
+  let matTexture = new THREE.MeshPhongMaterial({ map: footballtexture });
   let sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
   football = new THREE.Mesh(sphereGeometry, matTexture);
 
@@ -61,7 +63,7 @@ function init() {
   // Add the football to the scene
   scene.add(football);
 
-  // for any but basic material, lights are necessary
+  // create directional light that points at the footvall
   let light = new THREE.DirectionalLight(0xffffff, 1);
   light.position.set(
     football.position.x,
@@ -69,37 +71,42 @@ function init() {
     football.position.z
   );
   scene.add(light);
-  // scene.add(new THREE.AmbientLight(0x222222));
 
-  // move camera away from object or you'll see a black screen
+  // move camera back
   camera.position.z = 20;
 
-  // Create the plane geometry
+  // the plane will be the field image in the background
+  // create the plane geometry
   let planeGeometry = new THREE.PlaneGeometry(120, 120);
 
-  // Create the plane material
+  // create the plane material
   let planeMaterial = new THREE.MeshBasicMaterial({
     map: new THREE.TextureLoader().load("textures/field.png"),
     side: THREE.DoubleSide,
   });
 
-  // Create the plane mesh
+  // create the plane mesh
   let plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-  // Add the plane to the scene
+  // add the plane to the scene
   scene.add(plane);
   plane.position.set(0, 0, -30);
 
+  // create the player
   let playertexture = new THREE.TextureLoader().load("textures/player.png");
   let targetGeometry = new THREE.PlaneGeometry(2, 2);
   let targetMaterial = new THREE.MeshLambertMaterial({
     map: playertexture,
   });
   target = new THREE.Mesh(targetGeometry, targetMaterial);
+  // set to random x position
   target.position.set(Math.random() * 50 - 25, 0, -25);
   scene.add(target);
 
+  // create font loader
   let loader = new THREE.FontLoader();
+
+  // create text for the WR mode
   loader.load(
     "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
     function (font) {
@@ -116,6 +123,7 @@ function init() {
     }
   );
 
+  // create text for the QB mode
   loader.load(
     "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
     function (font) {
@@ -137,13 +145,15 @@ function init() {
   document.body.addEventListener("keydown", keyPressed, false);
 } // end init
 
+// init method for game 1
 function init1() {
+  // set game to 1
   game = 1;
   // initialize thrown and x_vel
   thrown = false;
   x_vel = 0;
 
-  // Position and rotate the football
+  // position and rotate the football
   football.position.set(0, 0, 11);
   football.rotation.set(0, 0, 0);
 
@@ -151,23 +161,27 @@ function init1() {
   camera.position.x = 0;
   camera.position.z = 20;
 
+  // make target visible
   target.visible = true;
 } // end init1
 
+// init method for game 2
 function init2() {
+  // set game to 2
   game = 2;
 
   // initialize thrown and x_vel
   thrown = false;
   x_vel = Math.random() * 0.14 - 0.07;
 
-  // Position and rotate the football
+  // position and rotate the football
   football.position.set(0, 0, -50);
   football.rotation.set(0, 0, 0);
 
   // move camera away from object or you'll see a black screen
   camera.position.z = 20;
 
+  // make target not visible
   target.visible = false;
 } // end init2
 
@@ -179,8 +193,10 @@ function update() {
   // if its game 1
   if (game == 1) {
     if (thrown) {
+      // check if football has gone far enough
       if (football.position.z <= -25) {
         // check if football and target are close
+        // make text visible for 1 second if they are
         let distance = target.position.x - football.position.x;
         if (distance < 2 && distance > -2) {
           throwtext.visible = true;
@@ -189,13 +205,16 @@ function update() {
           }, 1000);
         }
 
-        // Position and rotate the football
+        // position and rotate the football
         football.position.set(0, 0, 11);
         football.rotation.set(0, 0, 0);
+        // reset thrown and x_vel
         thrown = false;
         x_vel = 0;
+        // set target to random position
         target.position.set(Math.random() * 50 - 25, 0, -25);
       } else {
+        // move and spin football if its not too far
         football.rotation.z += 0.15;
         football.position.x += x_vel;
         football.position.z -= 0.25;
@@ -203,12 +222,16 @@ function update() {
     }
   } else {
     // if its game 2
+
+    // if football has come past the camera
     if (football.position.z >= 22) {
-      // Position and rotate the football
+      // position and rotate the football
       football.position.set(0, 0, -50);
       football.rotation.set(0, 0, 0);
+      // set random x_vel
       x_vel = Math.random() * 0.14 - 0.07;
     } else {
+      // move and spin football
       football.rotation.z += 0.15;
       football.position.x += x_vel;
       football.position.z += 1;
@@ -230,6 +253,7 @@ function update() {
 
 // handle key input
 function keyPressed(e) {
+  // switch game is s is pressed
   if (e.key == "s") {
     if (game == 1) {
       init2();
@@ -237,6 +261,7 @@ function keyPressed(e) {
       init1();
     }
   }
+  // if its game 1, up throws ball and left and right rotate the ball
   if (game == 1) {
     if (!thrown) {
       switch (e.key) {
@@ -254,10 +279,8 @@ function keyPressed(e) {
       }
     }
   } else {
+    // if its game 2, left and right move camera
     switch (e.key) {
-      case "ArrowUp":
-        thrown = true;
-        break;
       case "ArrowLeft":
         camera.position.x -= 0.45;
         break;
@@ -270,5 +293,6 @@ function keyPressed(e) {
   render();
 }
 
+// start the scene
 init();
 update();
