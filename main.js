@@ -37,6 +37,7 @@ function init() {
   x_vel = 0;
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // add results of renderer as an HTML DOM object
