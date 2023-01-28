@@ -8,7 +8,7 @@ In QB mode use the left and right arrow keys to aim the football at the player. 
 
 In WR mode, use the left and right arrow keys to move side to side to catch the football. Imagine you are viewing the field and ball from the perspective of a receivers hands. 
 
-## Desgin Process
+## Explanation
 
 The function "init" is called when the webpage loads, and it sets up the initial state of the game. The scene, camera, and renderer are created, and a football is added to the scene. The camera is positioned and there is a plane that shows an image of a football field. A light is added that always points to the football. A player target is also added to the scene with a random x position. Two text objects are created but both are made invisible. The game variable is set to 1.
 
